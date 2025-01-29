@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "bruno-hexagonal",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

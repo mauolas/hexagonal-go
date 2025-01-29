@@ -1,0 +1,15 @@
+meta {
+  name: getCustomerByID
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/customers/1234
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
