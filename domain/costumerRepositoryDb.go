@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"example.com/hexagonal/errs"
+	"example.com/hexagonal/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -67,4 +68,35 @@ func NewCustomerRepositoryDb() CustomerRespositoryDb {
 	client.SetMaxIdleConns(10)
 
 	return CustomerRespositoryDb{client}
+}
+
+func (d CustomerRespositoryDb) FindByStatus(status string) ([]Customer, *errs.AppError) {
+
+	var final_status int
+
+	if status == "active" {
+		final_status = 1
+	} else {
+		final_status = 0
+	}
+
+	findByStatusSql := "SELECT * FROM customers WHERE status = ?"
+
+	rows, err := d.client.Query(findByStatusSql, final_status)
+
+	if err != nil {
+		logger.Error("Error while querying customer table" + err.Error())
+	}
+
+	var customers []Customer
+	for rows.Next() {
+		var c Customer
+		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DateofBirth, &c.Status)
+		if err != nil {
+			logger.Error("Error while scanning customer table" + err.Error())
+		}
+		customers = append(customers, c)
+	}
+
+	return customers, nil
 }
